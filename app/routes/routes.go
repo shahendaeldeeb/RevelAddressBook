@@ -4,81 +4,55 @@ package routes
 import "github.com/revel/revel"
 
 
-type tUsers struct {}
-var Users tUsers
+type tTelephoneController struct {}
+var TelephoneController tTelephoneController
 
 
-func (_ tUsers) Login(
+func (_ tTelephoneController) ViewNumbers(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Users.Login", args).URL
+	return revel.MainRouter.Reverse("TelephoneController.ViewNumbers", args).URL
 }
 
-func (_ tUsers) TryLogin(
+func (_ tTelephoneController) DeleteNumber(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Users.TryLogin", args).URL
+	return revel.MainRouter.Reverse("TelephoneController.DeleteNumber", args).URL
 }
 
-func (_ tUsers) Logout(
+func (_ tTelephoneController) AddNumber(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Users.Logout", args).URL
-}
-
-
-type tTelephone struct {}
-var Telephone tTelephone
-
-
-func (_ tTelephone) ViewNumbers(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("Telephone.ViewNumbers", args).URL
-}
-
-func (_ tTelephone) DeleteNumber(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("Telephone.DeleteNumber", args).URL
-}
-
-func (_ tTelephone) AddNumber(
-		) string {
-	args := make(map[string]string)
-	
-	return revel.MainRouter.Reverse("Telephone.AddNumber", args).URL
+	return revel.MainRouter.Reverse("TelephoneController.AddNumber", args).URL
 }
 
 
-type tContacts struct {}
-var Contacts tContacts
+type tContactsController struct {}
+var ContactsController tContactsController
 
 
-func (_ tContacts) Home(
+func (_ tContactsController) Home(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Contacts.Home", args).URL
+	return revel.MainRouter.Reverse("ContactsController.Home", args).URL
 }
 
-func (_ tContacts) DeleteContact(
+func (_ tContactsController) DeleteContact(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Contacts.DeleteContact", args).URL
+	return revel.MainRouter.Reverse("ContactsController.DeleteContact", args).URL
 }
 
-func (_ tContacts) AddContact(
+func (_ tContactsController) AddContact(
 		) string {
 	args := make(map[string]string)
 	
-	return revel.MainRouter.Reverse("Contacts.AddContact", args).URL
+	return revel.MainRouter.Reverse("ContactsController.AddContact", args).URL
 }
 
 
@@ -91,6 +65,32 @@ func (_ tAppInit) CloseDatabase(
 	args := make(map[string]string)
 	
 	return revel.MainRouter.Reverse("AppInit.CloseDatabase", args).URL
+}
+
+
+type tUsersController struct {}
+var UsersController tUsersController
+
+
+func (_ tUsersController) Login(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("UsersController.Login", args).URL
+}
+
+func (_ tUsersController) TryLogin(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("UsersController.TryLogin", args).URL
+}
+
+func (_ tUsersController) Logout(
+		) string {
+	args := make(map[string]string)
+	
+	return revel.MainRouter.Reverse("UsersController.Logout", args).URL
 }
 
 

@@ -3,8 +3,8 @@ package models
 import (
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/gocql/gocql"
 )
-var GlobeVars HandlersVars
 type User struct {
 	Username string `db:"username"`
 	Password []byte `db:"userpassword"`
@@ -13,12 +13,13 @@ type LoginPage struct {
 	Error string
 }
 
-func (info User) SignUp (a *HandlersVars)(bool, string){
+func (info User) SignUp (a *gocql.Session)(bool, string){
 	var result bool
 	var Error string
 	secret, _ := bcrypt.GenerateFromPassword(info.Password, bcrypt.DefaultCost)
-	stmt, err := a.Db.Prepare("INSERT Users SET username=? , userpassword=?")
-	_, err = stmt.Exec(info.Username, secret)
+	err := a.Query(`INSERT INTO Mydatabase.users (username, userpassword) VALUES (?, ?)`,
+		info.Username, secret).Exec();
+
 	if err != nil{
 		Error = err.Error()
 		result = false
@@ -27,16 +28,12 @@ func (info User) SignUp (a *HandlersVars)(bool, string){
 	}
 	return result, Error
 }
-func (info User) Login (a *HandlersVars)(bool, string){
+func (info User) Login (a *gocql.Session)(bool, string){
 	var result bool
 	var Error string
 	var dbPasswordHash []byte
 
-	row, err := a.Db.Query("SELECT userpassword FROM Users WHERE username =?", info.Username)
-	defer row.Close()
-	if row.Next(){
-		row.Scan(&dbPasswordHash)
-	}
+	err := a.Query(`SELECT userpassword FROM Mydatabase.users WHERE username =?`, info.Username).Scan(&dbPasswordHash)
 	if err != nil {
 		Error = err.Error()
 		result = false
@@ -52,14 +49,16 @@ func (info User) Login (a *HandlersVars)(bool, string){
 	}
 	return result, Error
 }
-func (info User) GetAllContacts(a *HandlersVars)[]ContactInfo{
+func (info User) GetAllContacts(a *gocql.Session)[]ContactInfo{
 	var contact ContactInfo
 	Contacts := []ContactInfo{}
-	rows, err := a.Db.Query("select * from Contacts where username =? ", info.Username)
-	CheckErr(err)
-	for rows.Next() {
-		rows.Scan(&contact.Name, &contact.Email, &contact.Nationality, &contact.Address, &contact.Username, &contact.Id)
+	iter := a.Query(`select * from Mydatabase.contact_by_userid where username =? `, info.Username).Iter()
+
+	for iter.Scan(&contact.Username, &contact.Id, &contact.Address, &contact.Email, &contact.Name, &contact.Nationality){
 		Contacts = append(Contacts, contact)
+	}
+	if err := iter.Close(); err != nil {
+		CheckErr(err)
 	}
 	return Contacts
 }

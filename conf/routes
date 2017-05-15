@@ -12,15 +12,15 @@ module:testrunner
 # Ignore favicon requests
 GET     /favicon.ico                            404
 
-GET       /users/login                            Users.Login
-POST      /users/login                            Users.TryLogin
-GET       /logout                                 Users.Logout
-DELETE    /contact/:id                            Contacts.DeleteContact
-POST      /contact                                Contacts.AddContact
-GET       /viewNumbers/:id                        Telephone.ViewNumbers
-DELETE    /deleteNumber/:numId                    Telephone.DeleteNumber
-POST      /addNumber/:ContactId                   Telephone.AddNumber
-Get       /Contacts/:pageName                     Contacts.Home
+GET       /users/login                            UsersController.Login
+POST      /users/login                            UsersController.TryLogin
+GET       /logout                                 UsersController.Logout
+DELETE    /contact/:contactid                     ContactsController.DeleteContact
+POST      /contact                                ContactsController.AddContact
+GET       /viewNumbers/:id                        TelephoneController.ViewNumbers
+DELETE    /deleteNumber/:numId/:contactId         TelephoneController.DeleteNumber
+POST      /addNumber/:ContactId                   TelephoneController.AddNumber
+Get       /Contacts/:pageName                     ContactsController.Home
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")

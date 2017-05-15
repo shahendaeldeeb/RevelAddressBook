@@ -1,13 +1,13 @@
 package models
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/gocql/gocql"
+)
+var (
+	SessionVariable *gocql.Session
 )
 
-type HandlersVars struct {
-	Db *sql.DB
-}
 func CheckErr(err error) {
 	if err != nil {
 		defer func() {

@@ -29,36 +29,7 @@ func main() {
 	revel.Init(*runMode, *importPath, *srcPath)
 	revel.INFO.Println("Running revel server")
 	
-	revel.RegisterController((*controllers.Users)(nil),
-		[]*revel.MethodType{
-			&revel.MethodType{
-				Name: "Login",
-				Args: []*revel.MethodArg{ 
-				},
-				RenderArgNames: map[int][]string{ 
-				},
-			},
-			&revel.MethodType{
-				Name: "TryLogin",
-				Args: []*revel.MethodArg{ 
-				},
-				RenderArgNames: map[int][]string{ 
-					36: []string{ 
-						"Error",
-					},
-				},
-			},
-			&revel.MethodType{
-				Name: "Logout",
-				Args: []*revel.MethodArg{ 
-				},
-				RenderArgNames: map[int][]string{ 
-				},
-			},
-			
-		})
-	
-	revel.RegisterController((*controllers.Telephone)(nil),
+	revel.RegisterController((*controllers.TelephoneController)(nil),
 		[]*revel.MethodType{
 			&revel.MethodType{
 				Name: "ViewNumbers",
@@ -84,14 +55,14 @@ func main() {
 			
 		})
 	
-	revel.RegisterController((*controllers.Contacts)(nil),
+	revel.RegisterController((*controllers.ContactsController)(nil),
 		[]*revel.MethodType{
 			&revel.MethodType{
 				Name: "Home",
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 
-					26: []string{ 
+					25: []string{ 
 						"Contacts",
 					},
 				},
@@ -117,6 +88,35 @@ func main() {
 		[]*revel.MethodType{
 			&revel.MethodType{
 				Name: "CloseDatabase",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			
+		})
+	
+	revel.RegisterController((*controllers.UsersController)(nil),
+		[]*revel.MethodType{
+			&revel.MethodType{
+				Name: "Login",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+				},
+			},
+			&revel.MethodType{
+				Name: "TryLogin",
+				Args: []*revel.MethodArg{ 
+				},
+				RenderArgNames: map[int][]string{ 
+					32: []string{ 
+						"Error",
+					},
+				},
+			},
+			&revel.MethodType{
+				Name: "Logout",
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 

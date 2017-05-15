@@ -2,44 +2,45 @@ package controllers
 import (
 	"github.com/revel/revel"
 	"Revel-AddressBook/app/models"
-	"strconv"
+	"github.com/gocql/gocql"
 )
-type Contacts struct {
+type ContactsController struct {
 	 *revel.Controller
  }
-func (c Contacts) Home () revel.Result {
+func (c ContactsController) Home () revel.Result {
 	var page string
-	usedDataBase := &models.HandlersVars{Db:Database}
+	usedDataBase := models.SessionVariable
 	page = c.Params.Route.Get("pageName")
-	if page == ""{
+	if page == "" {
 		page = "Home"
 	}
-	if page == "About"{
-		 return c.RenderTemplate("Contacts/About.html")
-	}
-	if page == "Contact"{
-		return c.RenderTemplate("Contacts/Contact.html")
-	}else{
-
+	switch page {
+	case "About" :
+		return c.RenderTemplate("ContactsController/About.html")
+	case "Contact" :
+		return c.RenderTemplate("ContactsController/Contact.html")
+	case "Home" :
 		user := models.User{Username:c.Session["User"]}
 		Contacts := user.GetAllContacts(usedDataBase)
-                return c.Render(Contacts)
+		return c.Render(Contacts)
+	default:
+		return c.RenderTemplate("errors/404.html")
+
 	}
 }
-func (c Contacts) DeleteContact() revel.Result{
-	usedDataBase := &models.HandlersVars{Db:Database}
+
+func (c ContactsController) DeleteContact() revel.Result{
+	var err error
+	usedDataBase := models.SessionVariable
 	contact := models.ContactInfo{}
-	id, err := strconv.ParseInt(c.Params.Route.Get("id"), 10, 64)
+	contact.Id, err = gocql.ParseUUID(c.Params.Route.Get("contactid"))
+	contact.Username = c.Session["User"]
  	models.CheckErr(err)
-	contact.Id = int(id)
-	found := contact.DeleteValidation(c.Session["User"], usedDataBase)
-	if found {
-		contact.Delete(usedDataBase)
-	}
+	contact.Delete(usedDataBase)
 	return c.RenderTemplate("Contacts/Home.html")
 }
-func (c Contacts) AddContact() revel.Result{
-	usedDataBase := &models.HandlersVars{Db:Database}
+func (c ContactsController) AddContact() revel.Result{
+	usedDataBase := models.SessionVariable
 	var contactInfo models.ContactInfo
 	c.Validation.Required(c.Params.Form.Get("contact.Name"))
 	c.Validation.Required(c.Params.Form.Get("contact.Number"))
@@ -50,12 +51,9 @@ func (c Contacts) AddContact() revel.Result{
 
 	c.Params.Bind(&contactInfo, "contact")
 	contactInfo.Username = c.Session["User"]
-	id := contactInfo.Add(usedDataBase)
-	contactInfo.Id = int(id)
+	contactInfo.Id = contactInfo.Add(usedDataBase)
+	c.Session["Contact"] = contactInfo.Id.String()
 
-	tele := models.Telephone{Number:contactInfo.Number, ContactId:contactInfo.Id}
-	tele.Add(usedDataBase)
-	c.Session["Contact"] = string(id)
 	return c.RenderTemplate("Contacts/Home.html")
 
 }

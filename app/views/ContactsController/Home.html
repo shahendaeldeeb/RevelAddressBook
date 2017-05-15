@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -179,6 +180,7 @@
 document.getElementById("defaultOpen").click();
 
 function save(){
+
     $.ajax({
         url:"/contact",
         type:"POST",
@@ -210,8 +212,8 @@ function ViewContactData(id){
 
                 dataFromServer.forEach(function(result){
                 contactId =result.ContactId ;
-                console.log(6);
-                var row = $("<tr id='tele-row-"+result.numId+"'><td>"+result.Number+"</td><td><button class='delete-btn' onclick='DeleteNumber("+result.NumId+")'>Delete Number</button></td></tr>");
+
+                var row = $("<tr id='tele-row-"+result.NumId+"'><td>"+result.Number+"</td><td><button class='delete-btn' onclick='DeleteNumber(\""+result.NumId+"\" ,\""+result.ContactId+"\" )'>Delete Number</button></td></tr>");
                 SearchResult.append(row);
                 })
 
@@ -222,10 +224,13 @@ function ViewContactData(id){
 
     });
 }
-function DeleteNumber(numId)
+function DeleteNumber(numId, contactId)
 {
+console.log(numId)
+console.log(contactId)
     $.ajax({
-    url:"/deleteNumber/" + numId ,
+
+    url:"/deleteNumber/"+numId+"/"+contactId+"" ,
     type:"DELETE",
     success:function(){
             $("#tele-row-"+numId).remove();

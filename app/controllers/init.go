@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"github.com/revel/revel"
-	//"reflect"
 )
 
 func init(){
@@ -21,5 +20,4 @@ func init(){
 		revel.CompressFilter,          // Compress the result.
 		revel.ActionInvoker,           // Invoke the action.
 	}
-	//revel.TypeBinders[reflect.TypeOf(MyType{})] = myBinder
 }

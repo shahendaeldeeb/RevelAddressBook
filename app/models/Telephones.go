@@ -1,42 +1,24 @@
 package models
 
-type Telephone struct {
-	ContactId int   `db:"contactid" `
-	Number string  	`db:"number" `
-	NumId int	`db:"numid"`
-}
-func (tele Telephone) Delete(a *HandlersVars){
-	stmt, err := a.Db.Prepare("delete from Telephones where Numid=?")
-	CheckErr(err)
-	_, err = stmt.Exec(tele.NumId)
-	CheckErr(err)
-}
-func (tele *Telephone) Add(a *HandlersVars)int64{
-	stmt2, err := a.Db.Prepare("INSERT Telephones SET number=? , contactid=?")
-	CheckErr(err)
-	stmt, err := stmt2.Exec(tele.Number, tele.ContactId)
-	CheckErr(err)
-	id, err := stmt.LastInsertId()
-	CheckErr(err)
-	return id
-}
-func (tele Telephone) DeleteValidation(LoggedUsername string, a *HandlersVars)bool{
-	row, err := a.Db.Query("SELECT contactid FROM Telephones WHERE numid =?", tele.NumId)
-	defer row.Close()
-	if row.Next() {
-		row.Scan(&tele.ContactId)
-	}
+import (
+	"github.com/gocql/gocql"
+)
 
-	row2, err := a.Db.Query("SELECT username FROM Contacts WHERE id =?",tele.ContactId)
-	defer row2.Close()
+type Telephone struct {
+	ContactId gocql.UUID   	`db:"contactid" `
+	Number string  		`db:"number" `
+	NumId gocql.UUID	`db:"numid"`
+}
+func (tele Telephone) Delete(a *gocql.Session){
+	err := a.Query("DELETE from Mydatabase.numbers_by_contactid where contactid=? AND Numid=?",tele.ContactId, tele.NumId).Exec()
 	CheckErr(err)
-	result := false
-	var UserName string
-	if row2.Next() {
-		row2.Scan(&UserName)
-	}
-	if UserName == LoggedUsername {
-		result = true
-	}
-	return result
+
+}
+func (tele *Telephone) Add(a *gocql.Session){
+	var err error
+	tele.NumId, err = gocql.RandomUUID()
+	CheckErr(err)
+	err = a.Query(`INSERT INTO Mydatabase.numbers_by_contactid (contactid, numid, number) VALUES (?, ?, ?) IF NOT EXISTS`,  tele.ContactId, tele.NumId, tele.Number).Exec()
+	CheckErr(err)
+
 }
